@@ -1,7 +1,7 @@
 import math
 import random
 
-ROOM_WIDTH, ROOM_HEIGHT = 18, 12
+ROOM_WIDTH, ROOM_HEIGHT = 14, 10
 HORIZONTAL_ROOMS, VERTICAL_ROOMS = 4, 4
 WIDTH, HEIGHT = ROOM_WIDTH*HORIZONTAL_ROOMS, ROOM_HEIGHT*VERTICAL_ROOMS
 
@@ -74,30 +74,34 @@ def deepRandomWalk(previous, start, end, width, height):
             goodPath = False
             previous.pop()
         return previous, goodPath
-        
+
+def replaceChar(str, char, index):
+    str = str[:index]+char+str[index+1:]
+    return str
 
 def generatePath(grid, start, end):
     path, goodPath = deepRandomWalk([], start, end, len(grid[0]), len(grid))
 
     for i in range(len(path)-1):
         if path[i+1][0]==path[i][0]+1: # going east
-            grid[path[i][1]][path[i][0]]=grid[path[i][1]][path[i][0]][0]+'1'+grid[path[i][1]][path[i][0]][2:]
-            grid[path[i+1][1]][path[i+1][0]]=grid[path[i+1][1]][path[i+1][0]][:3]+'1'
+            grid[path[i][1]][path[i][0]]=replaceChar(grid[path[i][1]][path[i][0]], '1', 1)
+            grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 3)
         elif path[i+1][0]==path[i][0]-1: # going west
-            grid[path[i][1]][path[i][0]]=grid[path[i][1]][path[i][0]][:3]+'1'
-            grid[path[i+1][1]][path[i+1][0]]=grid[path[i+1][1]][path[i+1][0]][0]+'1'+grid[path[i+1][1]][path[i+1][0]][2:]
+            grid[path[i][1]][path[i][0]]=replaceChar(grid[path[i][1]][path[i][0]], '1', 3)
+            grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 1)
         elif path[i+1][1]==path[i][1]+1: # going south
-            grid[path[i][1]][path[i][0]]=grid[path[i][1]][path[i][0]][:2]+'1'+grid[path[i][1]][path[i][0]][3]
-            grid[path[i+1][1]][path[i+1][0]]='1'+grid[path[i+1][1]][path[i+1][0]][1:]
+            grid[path[i][1]][path[i][0]]=replaceChar(grid[path[i][1]][path[i][0]], '1', 2)
+            grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 0)
         elif path[i+1][1]==path[i][1]-1: # going north
-            grid[path[i][1]][path[i][0]]='1'+grid[path[i][1]][path[i][0]][1:]
-            grid[path[i+1][1]][path[i+1][0]]=grid[path[i+1][1]][path[i+1][0]][:2]+'1'+grid[path[i+1][1]][path[i+1][0]][3]
+            grid[path[i][1]][path[i][0]]=replaceChar(grid[path[i][1]][path[i][0]], '1', 0)
+            grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 2)
 
     return grid, path
             
 
 def main():
-    print("World size: {0}x{1}".format(WIDTH,HEIGHT))
+    print("\nWorld size: {0}x{1}".format(WIDTH,HEIGHT))
+    print("Room size: {0}x{1}".format(ROOM_WIDTH,ROOM_HEIGHT))
     roomGrid = [['0000' for x in range(HORIZONTAL_ROOMS)] for y in range(VERTICAL_ROOMS)]
     print("Grid size: {0}x{1}\n".format(len(roomGrid[0]),len(roomGrid)))
 
