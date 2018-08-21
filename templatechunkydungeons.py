@@ -97,6 +97,16 @@ def generatePath(grid, start, end):
             grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 2)
 
     return grid, path
+
+
+def hasUnreachableRooms(grid):
+    unreachable = False
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == '0000':
+                unreachable = True
+                break;
+    return unreachable
             
 
 def main():
@@ -113,6 +123,7 @@ def main():
     roomGrid, mainPath = generatePath(roomGrid, start, end)
     print(roomGridString(roomGrid, start, end))
 
+    print("Has unreachable rooms?: {0}".format(hasUnreachableRooms(roomGrid)))
     # next: connect the rest of the rooms to make them reachable
 
 
