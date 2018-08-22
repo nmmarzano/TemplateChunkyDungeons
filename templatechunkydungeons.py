@@ -2,7 +2,7 @@ import math
 import random
 
 ROOM_WIDTH, ROOM_HEIGHT = 14, 10
-HORIZONTAL_ROOMS, VERTICAL_ROOMS = 4, 4
+HORIZONTAL_ROOMS, VERTICAL_ROOMS = 6, 5
 WIDTH, HEIGHT = ROOM_WIDTH*HORIZONTAL_ROOMS, ROOM_HEIGHT*VERTICAL_ROOMS
 
 # Rooms have four sides, any of them can be open -> if we take an open side as a 1 and a closed side as a 0 each room type can be defined with 4 bits
@@ -99,14 +99,51 @@ def generatePath(grid, start, end):
     return grid, path
 
 
+def randomOpenRoom(grid):
+    reachable = []
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] != '0000':
+                reachable.append([j,i])
+    random.shuffle(reachable)
+    return reachable[0]
+
+
+def randomUnreachableRoom(grid):
+    unreachable = []
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == '0000':
+                unreachable.append([j,i])
+    random.shuffle(unreachable)
+    return unreachable[0]
+
+
 def hasUnreachableRooms(grid):
     unreachable = False
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             if grid[i][j] == '0000':
                 unreachable = True
-                break;
+                break
     return unreachable
+
+
+def countUnreachableRooms(grid):
+    count = 0
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == '0000':
+                count += 1
+    return count
+
+
+def fullyConnectRooms(roomGrid):
+    while hasUnreachableRooms(roomGrid):
+        unreachableRoom = randomUnreachableRoom(roomGrid)
+        openRoom = randomOpenRoom(roomGrid)
+        generatePath(roomGrid, unreachableRoom, openRoom)
+    return roomGrid
             
 
 def main():
@@ -123,8 +160,18 @@ def main():
     roomGrid, mainPath = generatePath(roomGrid, start, end)
     print(roomGridString(roomGrid, start, end))
 
-    print("Has unreachable rooms?: {0}".format(hasUnreachableRooms(roomGrid)))
-    # next: connect the rest of the rooms to make them reachable
+    hasUnreachable = hasUnreachableRooms(roomGrid)
+    print("Has unreachable rooms?: {0}".format(hasUnreachable))
+    if hasUnreachable:
+        unreachableCount = countUnreachableRooms(roomGrid)
+        percentageUnreachable = (unreachableCount/(HORIZONTAL_ROOMS*VERTICAL_ROOMS))*100
+        print("Has {0} unreachable rooms accounting for {1}%".format(unreachableCount, percentageUnreachable))
+        print("{0}% of the map is visitable".format(100-percentageUnreachable))
+        roomGrid = fullyConnectRooms(roomGrid)
+        print("\nFully connected grid:")
+        print(roomGridString(roomGrid, start, end))
+    
+    
 
 
 if __name__ == "__main__":
