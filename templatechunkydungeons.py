@@ -144,6 +144,19 @@ def fullyConnectRooms(roomGrid):
         openRoom = randomOpenRoom(roomGrid)
         generatePath(roomGrid, unreachableRoom, openRoom)
     return roomGrid
+
+
+def percentageUnreachable(grid):
+    count = countUnreachableRooms(grid)
+    return (count/(len(grid)*len(grid[0])))*100
+
+
+def connectRoomsEnsuringMinimum(grid, percentage):
+    while (100 - percentageUnreachable(grid)) < percentage:
+        unreachableRoom = randomUnreachableRoom(grid)
+        openRoom = randomOpenRoom(grid)
+        generatePath(grid, unreachableRoom, openRoom)
+    return grid
             
 
 def main():
@@ -164,12 +177,17 @@ def main():
     print("Has unreachable rooms?: {0}".format(hasUnreachable))
     if hasUnreachable:
         unreachableCount = countUnreachableRooms(roomGrid)
-        percentageUnreachable = (unreachableCount/(HORIZONTAL_ROOMS*VERTICAL_ROOMS))*100
-        print("Has {0} unreachable rooms accounting for {1}%".format(unreachableCount, percentageUnreachable))
-        print("{0}% of the map is visitable".format(100-percentageUnreachable))
-        roomGrid = fullyConnectRooms(roomGrid)
-        print("\nFully connected grid:")
+        percentage = percentageUnreachable(roomGrid)
+        print("Has {0} unreachable rooms accounting for {1}%".format(unreachableCount, percentage))
+        print("{0}% of the map is visitable".format(100-percentage))
+        roomGrid = connectRoomsEnsuringMinimum(roomGrid, 70)
+        print("\nEnsuring 70% of grid connected:")
         print(roomGridString(roomGrid, start, end))
+        unreachableCount = countUnreachableRooms(roomGrid)
+        percentage = percentageUnreachable(roomGrid)
+        print("Has {0} unreachable rooms accounting for {1}%".format(unreachableCount, percentage))
+        print("{0}% of the map is visitable".format(100-percentage))
+    # too many openings in rooms -> either go from a random unreachable room to the CLOSEST open room, or don't connect everything and just settle for a minimum percentage
     
     
 
