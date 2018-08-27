@@ -80,9 +80,11 @@ def replaceChar(str, char, index):
     return str
 
 def generatePath(grid, start, end):
+    print("generatePath from {0} to {1}".format(start,end))
     path, goodPath = deepRandomWalk([], start, end, len(grid[0]), len(grid))
 
-    for i in range(len(path)-1):
+    for i in range(len(path)-1): #FIX
+        print(grid)
         if path[i+1][0]==path[i][0]+1: # going east
             grid[path[i][1]][path[i][0]]=replaceChar(grid[path[i][1]][path[i][0]], '1', 1)
             grid[path[i+1][1]][path[i+1][0]]=replaceChar(grid[path[i+1][1]][path[i+1][0]], '1', 3)
@@ -167,6 +169,7 @@ def main():
 
     start= [random.randint(0,len(roomGrid)-1), random.randint(0,len(roomGrid[0])-1)]
     end = [random.randint(0,len(roomGrid)-1), random.randint(0,len(roomGrid[0])-1)]
+    print("{0} to {1}".format(start, end))
     while start==end:
         end = [random.randint(0,len(roomGrid)-1), random.randint(0,len(roomGrid[0])-1)]
     
